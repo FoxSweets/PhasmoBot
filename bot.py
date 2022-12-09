@@ -19,9 +19,6 @@ async def on_ready():
 			print(f"Загружен файл - |{filename[:-3]}|")
 	await bot.tree.sync()
 
-	#await bot.change_presence( status = discord.Status.online, activity = discord.Game(f'{PREFIX[0]}help') )
-
-
 #-------------------------------------------------
 # bot run
 bot.run(config.TOKEN)
