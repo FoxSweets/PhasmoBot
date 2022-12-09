@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord import app_commands
+from discord.app_commands import Choice
 import sqlite3
 
 class Theend_games(commands.Cog):
@@ -9,7 +10,14 @@ class Theend_games(commands.Cog):
 		self.bot = bot
 
 	@app_commands.command(name = "theend", description="Выбрать призрака и закончить игру!")
-	async def _Theend(self, interaction: discord.Interaction, theend: int = 0):
+	@app_commands.choices(ghost = [
+		Choice(name = "Полтергейст", value = 1),
+		Choice(name = "Демон", value = 2),
+		Choice(name = "Тень", value = 3),
+		Choice(name = "Мимик", value = 4),
+		Choice(name = "Дух", value = 5),
+		])
+	async def _Theend(self, interaction: discord.Interaction, ghost: int):
 		db = sqlite3.connect("./database.db")
 		cursor = db.cursor()
 		try:
@@ -24,13 +32,13 @@ class Theend_games(commands.Cog):
 					emb = discord.Embed( title =f"Вы не можете голосовать!!", colour = discord.Color.red() )
 					await interaction.response.send_message( embed = emb, ephemeral=True )
 				else:
-					if theend == 0:
-						emb = discord.Embed( title =f"Выберите призрака (`ghost`)!!", colour = discord.Color.red() )
+					if ghost == 0:
+						emb = discord.Embed( title =f"Выберите призрака (`/ghost`)!!", colour = discord.Color.red() )
 						await interaction.response.send_message( embed = emb, ephemeral=True )
 					else:
 						server_id_gmp = cursor.execute(f"SELECT server_id_p FROM profile WHERE server_id_p = ?", (interaction.user.guild.id,)).fetchone()[0]
 						ghost_name = cursor.execute(f"SELECT name FROM ghosts WHERE ghost_id = ?", (ghost1,)).fetchone()[0]
-						if theend == ghost1:
+						if ghost == ghost1:
 							emb = discord.Embed( title =f"Вы победили!! это был \"{ghost_name}\"", colour = discord.Color.teal() )
 
 							cursor.execute(f"UPDATE profile SET win_p = win_p + ? WHERE server_id_p = ?", (1, server_id_gmp,))

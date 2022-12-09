@@ -15,7 +15,7 @@ class Select(discord.ui.Select):
 			discord.SelectOption(label="Датчик ЭМП", value="4", emoji="📳", description="проверить |ЭМП|"),
 			discord.SelectOption(label="Камера", value="5", emoji="🎥", description="Установить |Камеры|"),
 			discord.SelectOption(label="Книга", value="6", emoji="📖", description="Установить |Книгу|"),
-			discord.SelectOption(label="Книга (Да/Нет)", value="7📘", emoji="📜", description="Установить |Да/Нет|"),
+			discord.SelectOption(label="Книга (Да/Нет)", value="7", emoji="📜", description="Установить |Да/Нет|"),
 			discord.SelectOption(label="УФ-фонарик", value="8", emoji="🔦", description="Проверить на отпечатки рук"),
 			discord.SelectOption(label="Успокоение", value="9", emoji="🎈", description="Успокоить призрака"),
 			discord.SelectOption(label="Шкатулка", value="10", emoji="📻", description="Завести шкатулку призрака")
@@ -100,6 +100,7 @@ class Select(discord.ui.Select):
 						cursor.execute(f"UPDATE bots_games SET item2_g = ? WHERE server_id_bg=?", (1, interaction.user.guild.id,))
 						cursor.execute(f"UPDATE users SET use_one = ? WHERE id = ? AND server_id=?", (1, interaction.user.id, interaction.user.guild.id,))
 					else:
+						print(item2)
 						emb = discord.Embed( title =f"У вас нету такого предмета!!", colour = discord.Color.red() )	
 				
 				elif self.values[0] == "8":
@@ -137,7 +138,9 @@ class Select(discord.ui.Select):
 				db.commit()
 			await interaction.response.edit_message( embed = emb )
 			db.commit()
-
+		
+		except sqlite3.Error as er:
+			print(er)
 
 		finally:
 			cursor.close()
